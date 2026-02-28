@@ -13,13 +13,20 @@ const AddVendor = () => {
     const { isLoading, isError, isSuccess, message } = useSelector((state) => state.vendor);
 
     useEffect(() => {
-        if (isError) toast.error(message);
-        if (isSuccess) { toast.success('Vendor added!'); navigate('/vendors'); }
-        dispatch(resetVendorState());
-    }, [isError, isSuccess, message, navigate, dispatch]);
+        return () => { dispatch(resetVendorState()); };
+    }, [dispatch]);
 
     const onChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
-    const onSubmit = (e) => { e.preventDefault(); dispatch(createVendor(formData)); };
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            await dispatch(createVendor(formData)).unwrap();
+            toast.success('Vendor added!');
+            navigate('/vendors');
+        } catch (error) {
+            toast.error(error || 'Failed to add vendor');
+        }
+    };
 
     return (
         <div>

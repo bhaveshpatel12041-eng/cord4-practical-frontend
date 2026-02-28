@@ -23,16 +23,20 @@ const AddPayout = () => {
     useEffect(() => { dispatch(getVendors()); }, [dispatch]);
 
     useEffect(() => {
-        if (isError) toast.error(message);
-        if (isSuccess) { toast.success('Payout draft created!'); navigate('/payouts'); }
-        dispatch(resetPayoutState());
-    }, [isError, isSuccess, message, navigate, dispatch]);
+        return () => { dispatch(resetPayoutState()); };
+    }, [dispatch]);
 
     const onChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }));
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
         if (!vendor_id) { toast.error('Please select a vendor'); return; }
-        dispatch(createPayout({ vendor_id, amount: Number(amount), mode, note }));
+        try {
+            await dispatch(createPayout({ vendor_id, amount: Number(amount), mode, note })).unwrap();
+            toast.success('Payout draft created!');
+            navigate('/payouts');
+        } catch (error) {
+            toast.error(error || 'Failed to create payout');
+        }
     };
 
     return (
