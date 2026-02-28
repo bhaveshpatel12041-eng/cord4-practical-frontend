@@ -9,66 +9,58 @@ const VendorList = () => {
     const { vendors, isLoading, isError, message } = useSelector((state) => state.vendor);
 
     useEffect(() => {
-        if (isError) {
-            toast.error(message);
-        }
+        if (isError) toast.error(message);
         dispatch(getVendors());
-
-        return () => {
-            dispatch(resetVendorState());
-        };
+        return () => { dispatch(resetVendorState()); };
     }, [isError, message, dispatch]);
 
-    if (isLoading) {
-        return <div style={{ textAlign: 'center', marginTop: '2rem' }}>Loading vendors...</div>;
-    }
+    if (isLoading) return (
+        <div className="loading-state">
+            <div className="spinner" />
+            Loading vendors…
+        </div>
+    );
 
     return (
         <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>Vendors</h2>
-                <Link
-                    to="/vendors/new"
-                    style={{ backgroundColor: '#10b981', color: 'white', padding: '0.5rem 1rem', textDecoration: 'none', borderRadius: '4px', fontWeight: '500' }}>
-                    Add Vendor
+            <div className="page-header">
+                <div>
+                    <h1 className="page-title">Vendors</h1>
+                    <p className="page-subtitle">{vendors.length} vendor{vendors.length !== 1 ? 's' : ''} registered</p>
+                </div>
+                <Link to="/vendors/new" className="btn btn-primary">
+                    + Add Vendor
                 </Link>
             </div>
 
-            <div style={{ overflowX: 'auto', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1)' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <div className="table-wrapper">
+                <table>
                     <thead>
-                        <tr style={{ backgroundColor: '#f3f4f6', borderBottom: '1px solid #e5e7eb' }}>
-                            <th style={{ padding: '0.75rem 1rem', fontWeight: '600', color: '#4b5563' }}>Name</th>
-                            <th style={{ padding: '0.75rem 1rem', fontWeight: '600', color: '#4b5563' }}>UPI ID</th>
-                            <th style={{ padding: '0.75rem 1rem', fontWeight: '600', color: '#4b5563' }}>Bank Account</th>
-                            <th style={{ padding: '0.75rem 1rem', fontWeight: '600', color: '#4b5563' }}>IFSC</th>
-                            <th style={{ padding: '0.75rem 1rem', fontWeight: '600', color: '#4b5563' }}>Status</th>
+                        <tr>
+                            <th>Name</th>
+                            <th>UPI ID</th>
+                            <th>Bank Account</th>
+                            <th>IFSC</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {vendors.map((vendor) => (
-                            <tr key={vendor._id} style={{ borderBottom: '1px solid #e5e7eb' }}>
-                                <td style={{ padding: '0.75rem 1rem', color: '#111827' }}>{vendor.name}</td>
-                                <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{vendor.upi_id || '-'}</td>
-                                <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{vendor.bank_account || '-'}</td>
-                                <td style={{ padding: '0.75rem 1rem', color: '#6b7280' }}>{vendor.ifsc || '-'}</td>
-                                <td style={{ padding: '0.75rem 1rem' }}>
-                                    <span style={{
-                                        padding: '0.25rem 0.5rem',
-                                        borderRadius: '9999px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 'bold',
-                                        backgroundColor: vendor.is_active ? '#d1fae5' : '#fee2e2',
-                                        color: vendor.is_active ? '#065f46' : '#991b1b'
-                                    }}>
-                                        {vendor.is_active ? 'Active' : 'Inactive'}
+                        {vendors.map(v => (
+                            <tr key={v._id}>
+                                <td className="td-primary">{v.name}</td>
+                                <td>{v.upi_id || <span style={{ color: 'var(--t3)' }}>—</span>}</td>
+                                <td>{v.bank_account || <span style={{ color: 'var(--t3)' }}>—</span>}</td>
+                                <td>{v.ifsc || <span style={{ color: 'var(--t3)' }}>—</span>}</td>
+                                <td>
+                                    <span className={`badge ${v.is_active ? 'badge-active' : 'badge-inactive'}`}>
+                                        {v.is_active ? 'Active' : 'Inactive'}
                                     </span>
                                 </td>
                             </tr>
                         ))}
                         {vendors.length === 0 && (
-                            <tr>
-                                <td colSpan="5" style={{ padding: '1rem', textAlign: 'center', color: '#6b7280' }}>No vendors found.</td>
+                            <tr className="empty-row">
+                                <td colSpan="5">No vendors found. Add one to get started.</td>
                             </tr>
                         )}
                     </tbody>

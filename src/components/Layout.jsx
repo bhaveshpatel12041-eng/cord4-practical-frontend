@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout, reset } from '../store/slices/authSlice';
 
@@ -14,31 +14,53 @@ const Layout = () => {
         navigate('/login');
     };
 
+    const initials = user ? user.email.slice(0, 2).toUpperCase() : '??';
+
     return (
-        <div style={{ fontFamily: 'sans-serif', backgroundColor: '#f9fafb', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <header style={{ backgroundColor: '#ffffff', borderBottom: '1px solid #e5e7eb', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 'bold', color: '#1f2937' }}>Payout Manager</h1>
-                {user ? (
-                    <nav style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-                        <Link to="/vendors" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '500' }}>Vendors</Link>
-                        <Link to="/payouts" style={{ color: '#4b5563', textDecoration: 'none', fontWeight: '500' }}>Payouts</Link>
-                        <div style={{ padding: '0 1rem', borderLeft: '1px solid #d1d5db' }}>
-                            <span style={{ fontSize: '0.875rem', color: '#6b7280', marginRight: '0.5rem' }}>{user.email} ({user.role})</span>
-                            <button
-                                onClick={handleLogout}
-                                style={{ padding: '0.5rem 1rem', border: 'none', backgroundColor: '#ef4444', color: '#fff', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-                                Logout
-                            </button>
+        <div className="app-layout">
+            {/* Sidebar */}
+            <aside className="sidebar">
+                <div className="sidebar-logo">
+                    <div className="logo-mark">💸</div>
+                    <span className="logo-text">PayoutManager</span>
+                </div>
+
+                <nav className="sidebar-nav">
+                    <NavLink
+                        to="/payouts"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                        <span className="nav-icon">📋</span> Payouts
+                    </NavLink>
+                    <NavLink
+                        to="/vendors"
+                        className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                    >
+                        <span className="nav-icon">🏪</span> Vendors
+                    </NavLink>
+                </nav>
+
+                {user && (
+                    <div className="sidebar-footer">
+                        <div className="user-badge">
+                            <div className="user-avatar">{initials}</div>
+                            <div style={{ minWidth: 0 }}>
+                                <div className="user-email" title={user.email}>{user.email}</div>
+                                <div className="user-role">{user.role}</div>
+                            </div>
                         </div>
-                    </nav>
-                ) : (
-                    <nav>
-                        <Link to="/login" style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: 'bold' }}>Login</Link>
-                    </nav>
+                        <button className="btn-logout" onClick={handleLogout}>
+                            🚪 Logout
+                        </button>
+                    </div>
                 )}
-            </header>
-            <main style={{ flex: 1, padding: '2rem', maxWidth: '1200px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
-                <Outlet />
+            </aside>
+
+            {/* Main Content */}
+            <main className="main-content">
+                <div className="page-container" style={{ maxWidth: '1080px' }}>
+                    <Outlet />
+                </div>
             </main>
         </div>
     );

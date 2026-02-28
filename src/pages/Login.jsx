@@ -11,17 +11,11 @@ const Login = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const { user, isLoading, isError, isSuccess, message } = useSelector(
-        (state) => state.auth
-    );
+    const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth);
 
     useEffect(() => {
-        if (isError) {
-            toast.error(message);
-        }
-        if (isSuccess || user) {
-            navigate('/payouts');
-        }
+        if (isError) toast.error(message);
+        if (isSuccess || user) navigate('/payouts');
         dispatch(reset());
     }, [user, isError, isSuccess, message, navigate, dispatch]);
 
@@ -31,37 +25,57 @@ const Login = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '4rem auto', padding: '2rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '1.5rem', color: '#111827' }}>Sign In</h2>
-            <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.5rem' }}>Email Address</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '4px', boxSizing: 'border-box' }}
-                        required
-                    />
+        <div className="login-page">
+            <div className="glow-orb glow-orb-1" />
+            <div className="glow-orb glow-orb-2" />
+
+            <div className="login-card">
+                <div className="login-logo">
+                    <div className="login-logo-mark">💸</div>
                 </div>
-                <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.5rem' }}>Password</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={{ width: '100%', padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '4px', boxSizing: 'border-box' }}
-                        required
-                    />
-                </div>
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    style={{ marginTop: '1rem', width: '100%', padding: '0.75rem', backgroundColor: '#3b82f6', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '1rem', fontWeight: '600', cursor: isLoading ? 'not-allowed' : 'pointer' }}
-                >
-                    {isLoading ? 'Loading...' : 'Login'}
-                </button>
-            </form>
+
+                <h1 className="login-title">Welcome back</h1>
+                <p className="login-sub">Sign in to your Payout Manager account</p>
+
+                <form className="login-form" onSubmit={onSubmit}>
+                    <div className="form-group">
+                        <label className="form-label">Email Address</label>
+                        <input
+                            type="email"
+                            className="form-control"
+                            placeholder="ops@demo.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label className="form-label">Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="btn btn-primary"
+                        disabled={isLoading}
+                        style={{ marginTop: '0.25rem', padding: '0.75rem', fontSize: '0.875rem' }}
+                    >
+                        {isLoading ? 'Signing in…' : 'Sign In'}
+                    </button>
+                </form>
+
+                <p style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.72rem', color: 'var(--t3)' }}>
+                    Demo: ops@demo.com / ops123 &nbsp;·&nbsp; finance@demo.com / fin123
+                </p>
+            </div>
         </div>
     );
 };
